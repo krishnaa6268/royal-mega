@@ -1,35 +1,38 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
+import { useCart } from '@/contexts/CartContext';
 
 export default function SelectionSummary({
-  selectedMain,
-  selectedMega,
-  onClear,
-  onAutoSelect,
-  entryPrice,
+  selectedMain = [],
+  selectedMega = null,
+  onClear = () => {},
+  onAutoSelect = () => {},
+  entryPrice = 40,
 }) {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart('Royal Lotto', selectedMain, selectedMega, entryPrice);
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      {/* Part 1: Selected numbers + Clear/Auto */}
+      {/* Selected Numbers & Buttons */}
       <div className="p-6">
         <div className="p-4 border rounded-lg bg-white flex flex-col md:flex-row items-center justify-between shadow-sm">
-          {/* Selected Numbers */}
           <div className="flex items-center flex-wrap gap-2 mb-4 md:mb-0">
-            <div className="font-semibold text-gray-600 lg:mr-8">
-              Selected numbers:
-            </div>
-          </div>
-
-          <div className="flex items-center flex-wrap gap-2">
-            {selectedMain.map((num, index) => (
-              <span
-                key={index}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D4AC54] text-black-800 font-medium shadow"
-              >
-                {num}
-              </span>
-            ))}
+            {selectedMain.length > 0 ? (
+              selectedMain.map((num, i) => (
+                <span
+                  key={i}
+                  className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D4AC54] text-black font-medium shadow"
+                >
+                  {num}
+                </span>
+              ))
+            ) : (
+              <span className="text-gray-400 italic">No numbers selected</span>
+            )}
             {selectedMega && (
               <span className="w-9 h-9 flex items-center justify-center rounded-full bg-red-500 text-white font-medium shadow">
                 {selectedMega}
@@ -37,7 +40,6 @@ export default function SelectionSummary({
             )}
           </div>
 
-          {/* Buttons */}
           <div className="flex items-center gap-3">
             <button
               onClick={onClear}
@@ -55,12 +57,15 @@ export default function SelectionSummary({
         </div>
       </div>
 
-      {/* Part 2: Entry price + Add to Cart */}
+      {/* Entry + Add to Cart */}
       <div className="flex items-center justify-between">
         <button className="px-10 py-3 bg-[#D4AC54] text-black font-semibold rounded-r-md shadow hover:bg-yellow-600 transition">
           Entry ₹{entryPrice}
         </button>
-        <button className="px-8 py-3 m-6 bg-[#D4AC54] text-black rounded-full shadow hover:bg-yellow-600 transition">
+        <button
+          onClick={handleAddToCart}
+          className="px-8 py-3 m-6 bg-[#D4AC54] text-black rounded-full shadow hover:bg-yellow-600 transition"
+        >
           Add To Cart
         </button>
       </div>
@@ -69,9 +74,9 @@ export default function SelectionSummary({
 }
 
 SelectionSummary.propTypes = {
-  selectedMain: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedMain: PropTypes.arrayOf(PropTypes.string),
   selectedMega: PropTypes.string,
-  onClear: PropTypes.func.isRequired,
-  onAutoSelect: PropTypes.func.isRequired,
-  entryPrice: PropTypes.number.isRequired,
+  onClear: PropTypes.func,
+  onAutoSelect: PropTypes.func,
+  entryPrice: PropTypes.number,
 };

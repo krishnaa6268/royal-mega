@@ -11,3 +11,7 @@ export const Landing = loadable(() => import('./Landing'), {
 export const NotFound = loadable(() => import('./NotFound'), {
   fallback: <Loading />,
 });
+
+export const AddCart = loadable(() => import('../components/AddCart/cart'), {
+  fallback: <Loading />,
+});
