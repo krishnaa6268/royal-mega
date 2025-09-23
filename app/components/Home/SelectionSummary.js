@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useCart } from '@/contexts/CartContext';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '@/redux/cartSlice';
 
 export default function SelectionSummary({
   selectedMain = [],
@@ -9,15 +10,22 @@ export default function SelectionSummary({
   onAutoSelect = () => {},
   entryPrice = 40,
 }) {
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    addToCart('Royal Lotto', selectedMain, selectedMega, entryPrice);
+    dispatch(
+      addToCart({
+        name: 'Royal Lotto',
+        selectedMain,
+        selectedMega,
+        price: entryPrice,
+      }),
+    );
   };
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Selected Numbers & Buttons */}
+      {/* Numbers */}
       <div className="p-6">
         <div className="p-4 border rounded-lg bg-white flex flex-col md:flex-row items-center justify-between shadow-sm">
           <div className="flex items-center flex-wrap gap-2 mb-4 md:mb-0">
