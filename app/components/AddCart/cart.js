@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Trash2, X } from 'lucide-react';
 import { removeFromCart, clearCart } from '@/redux/cartSlice';
+import { removeSequence } from '@/redux/cartSlice';
 
 export default function AddCart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -19,15 +20,18 @@ export default function AddCart() {
     setOpenModal(true);
   };
 
+  // Inside AddCart component
   const handleDeleteSequence = (itemId, seqIndex) => {
-    if (!selectedItem) return;
+    dispatch(removeSequence({ itemId, seqIndex }));
 
-    const updatedSequences = (selectedItem.sequences || []).filter(
-      (_, idx) => idx !== seqIndex,
-    );
-
+    // Optionally update selectedItem for modal display
     setSelectedItem((prev) =>
-      prev ? { ...prev, sequences: updatedSequences } : prev,
+      prev
+        ? {
+            ...prev,
+            sequences: prev.sequences.filter((_, idx) => idx !== seqIndex),
+          }
+        : prev,
     );
   };
 
