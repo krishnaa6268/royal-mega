@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
 import { IoIosArrowDropleft, IoIosArrowDropright } from 'react-icons/io';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '@/redux/cartSlice';
+import { setJackpot } from '@/redux/jackpotSlice';
 
 const jackpots = [
   {
@@ -35,6 +38,12 @@ export default function LotteryHeader() {
   const [direction, setDirection] = useState(0); // for slide direction
 
   const jackpot = jackpots[currentIndex];
+  const dispatch = useDispatch();
+
+  // ✅ Sync selected jackpot with Redux
+  useEffect(() => {
+    dispatch(setJackpot(jackpots[currentIndex]));
+  }, [currentIndex, dispatch]);
 
   const handlePrev = () => {
     setDirection(-1);
@@ -46,16 +55,26 @@ export default function LotteryHeader() {
     setCurrentIndex((prev) => (prev === jackpots.length - 1 ? 0 : prev + 1));
   };
 
+  const handlePickNumbers = () => {
+    // Example: random 7 numbers (6 main + 1 mega)
+    const sequence = Array.from(
+      { length: 7 },
+      () => Math.floor(Math.random() * 50) + 1,
+    );
+
+    dispatch(
+      addToCart({
+        name: jackpot.name,
+        price: Number(jackpot.ticketPrice.replace('₹', '')),
+        selectedMain: sequence.slice(0, 6),
+        selectedMega: sequence[6],
+      }),
+    );
+  };
+
   const variants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 100 : -100,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      transition: { duration: 0.6 },
-    },
+    enter: (direction) => ({ x: direction > 0 ? 100 : -100, opacity: 0 }),
+    center: { x: 0, opacity: 1, transition: { duration: 0.6 } },
     exit: (direction) => ({
       x: direction > 0 ? -100 : 100,
       opacity: 0,
@@ -65,6 +84,7 @@ export default function LotteryHeader() {
 
   return (
     <div className="bg-[#D0A549] rounded-lg lg:p-6 p-2 flex flex-col md:flex-row items-center justify-between shadow overflow-hidden">
+      {/* Jackpot carousel */}
       <div className="flex items-center relative w-full md:w-auto">
         {/* Left Arrow */}
         <div
@@ -133,6 +153,7 @@ export default function LotteryHeader() {
                     ))}
                   </div>
                 </div>
+
                 <div className="absolute bottom-0 right-0 border-b-8 border-[#FD6259] rounded-br-lg w-[100px]"></div>
               </div>
             </motion.div>
@@ -151,7 +172,10 @@ export default function LotteryHeader() {
       {/* Right - Buttons */}
       <div className="flex gap-2 flex-row mt-3 md:mt-0">
         <div className="flex gap-2 flex-col">
-          <button className="bg-gradient-to-r from-[#d3a94d] via-[#f3cd95] to-[#e4b956] border-2 border-black px-4 lg:px-8 py-2 lg:py-5 rounded-full lg:text-sm text-xs hover:bg-black hover:text-white transition">
+          <button
+            onClick={handlePickNumbers}
+            className="bg-gradient-to-r from-[#d3a94d] via-[#f3cd95] to-[#e4b956] border-2 border-black px-4 lg:px-8 py-2 lg:py-5 rounded-full lg:text-sm text-xs hover:bg-black hover:text-white transition"
+          >
             Pick Any 6 Numbers
           </button>
         </div>

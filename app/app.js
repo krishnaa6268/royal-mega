@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
 import Layout from './components/Layout';
 import AddCart from '@/components/AddCart/cart';
 import { Landing, NotFound } from './containers/pageListAsync';
@@ -18,20 +17,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover={false}
-        theme="colored"
-      />
+      </BrowserRouter>{' '}
     </Provider>
   );
 }
