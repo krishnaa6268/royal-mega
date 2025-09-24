@@ -8,7 +8,7 @@ export const Landing = loadable(() => import('./Landing'), {
 });
 
 // Static Pages
-export const NotFound = loadable(() => import('./NotFound'), {
+export const NotFound = loadable(() => import('../components/NotFoundPage'), {
   fallback: <Loading />,
 });
 

@@ -22,28 +22,38 @@ export default function SelectionSummary({
       return;
     }
 
-    // Ensure all numbers are selected first
     if (!selectedMain.length || selectedMega == null) {
       toast.error('Please select all numbers before adding to cart!');
       return;
     }
 
-    const currentSequence = [...selectedMain, selectedMega].join('-');
+    // Normalize the new sequence
+    const currentSequence = [...selectedMain, selectedMega]
+      .map(Number)
+      .sort((a, b) => a - b)
+      .join('-');
 
+    // Check duplicates in cart across all sequences of the same jackpot
     const isDuplicate = cartItems.some((item) => {
-      const itemSequence = [
-        ...(item.selectedMain || []),
-        item.selectedMega,
-      ].join('-');
-      return item.name === jackpot.name && itemSequence === currentSequence;
+      if (item.name.trim() !== jackpot.name.trim()) return false;
+
+      // item.sequences may be multiple sequences
+      return item.sequences?.some((seq) => {
+        const seqString = [...seq]
+          .map(Number)
+          .sort((a, b) => a - b)
+          .join('-');
+        return seqString === currentSequence;
+      });
     });
 
     if (isDuplicate) {
       toast.error('Duplicate selection! This sequence is already in the cart.');
+      console.log('Duplicate detected:', currentSequence);
       return;
     }
 
-    // Add to cart
+    // Add new sequence to cart
     dispatch(
       addToCart({
         name: jackpot.name,
@@ -54,6 +64,8 @@ export default function SelectionSummary({
     );
 
     toast.success('Added to cart successfully!');
+    // ✅ Clear the selections after adding
+    onClear();
   };
 
   return (

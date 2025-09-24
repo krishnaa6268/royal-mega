@@ -114,9 +114,12 @@ export default function Header() {
                       />
                       <span className="text-sm">Krishnapal Patel</span>
                     </div>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition">
+                    <Link
+                      to="/Addcart"
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition"
+                    >
                       <ShoppingBag size={18} /> Cart
-                    </button>
+                    </Link>
                     <button
                       onClick={() => setIsLogin(false)}
                       className="flex-1 px-4 py-2 rounded-full bg-red-600 text-white font-medium hover:bg-red-500 transition"

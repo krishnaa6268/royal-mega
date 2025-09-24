@@ -160,6 +160,12 @@ export default function LotteryHeader() {
           </AnimatePresence>
         </div>
 
+        <div className="lg:ml-1 hidden md:block ">
+          <p className="text-white text-xs tracking-widest [writing-mode:vertical-rl] rotate-180">
+            Slide for more draws
+          </p>
+        </div>
+
         {/* Right Arrow */}
         <div
           className="text-black ml-1 lg:p-2 rounded-full hover:text-gray-200 cursor-pointer z-10"

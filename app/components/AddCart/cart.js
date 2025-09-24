@@ -207,20 +207,25 @@ export default function AddCart() {
 
       {/* Modal */}
       {openModal && selectedItem && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 my-8 p-6 relative flex flex-col max-h-[90vh]">
+            {/* Close button */}
             <button
               onClick={() => setOpenModal(false)}
               className="absolute top-3 right-3 text-gray-600 hover:text-black"
             >
               <X size={20} />
             </button>
+
+            {/* Modal title */}
             <h2 className="text-lg font-semibold mb-4 text-center">
               {selectedItem.name}
             </h2>
-            <div className="space-y-3">
+
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto space-y-3 pr-2">
               {(selectedItem.sequences || []).map((seq, idx) => (
-                <div key={idx} className="flex items-center gap-3">
+                <div key={idx} className="flex items-center gap-3 flex-wrap">
                   <span className="font-semibold">{idx + 1}.</span>
                   <div className="flex flex-wrap gap-2">
                     {(seq || []).map((num, i) => (
@@ -234,16 +239,18 @@ export default function AddCart() {
                   </div>
                   <button
                     onClick={() => handleDeleteSequence(selectedItem.id, idx)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 ml-auto"
                   >
                     <Trash2 size={18} />
                   </button>
                 </div>
               ))}
             </div>
+
+            {/* OK button */}
             <button
               onClick={() => setOpenModal(false)}
-              className="mt-6 w-full bg-[#d4af37] text-black font-semibold py-2 rounded-lg hover:bg-yellow-500"
+              className="mt-4 w-full bg-[#d4af37] text-black font-semibold py-2 rounded-lg hover:bg-yellow-500"
             >
               OK
             </button>
