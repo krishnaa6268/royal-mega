@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Trash2, X } from 'lucide-react';
-import { removeFromCart, clearCart } from '@/redux/cartSlice';
-import { removeSequence } from '@/redux/cartSlice';
+import { removeFromCart, clearCart, removeSequence } from '@/redux/cartSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function AddCart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -15,38 +16,42 @@ export default function AddCart() {
     (acc, item) => acc + item.price * (item.sequences?.length || 1),
     0,
   );
+
   const handleViewTicket = (item) => {
     setSelectedItem(item);
     setOpenModal(true);
   };
 
-  // Inside AddCart component
   const handleDeleteSequence = (itemId, seqIndex) => {
     dispatch(removeSequence({ itemId, seqIndex }));
+    toast.info('Sequence removed from cart');
 
-    // Optionally update selectedItem for modal display
-    setSelectedItem((prev) =>
-      prev
-        ? {
-            ...prev,
-            sequences: prev.sequences.filter((_, idx) => idx !== seqIndex),
-          }
-        : prev,
-    );
+    // Update modal state
+    setSelectedItem((prev) => {
+      if (!prev) return prev;
+      const newSequences = prev.sequences.filter((_, idx) => idx !== seqIndex);
+      if (newSequences.length === 0) setOpenModal(false); // close modal if no sequences left
+      return { ...prev, sequences: newSequences };
+    });
+  };
+
+  const handleClearCart = () => {
+    dispatch(clearCart());
+    toast.info('Cart cleared');
   };
 
   return (
-    <div className="bg-black min-h-screen flex items-center justify-center px-4">
+    <div className="bg-black min-h-screen flex items-center justify-center px-4 lg:flex-row flex-col">
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8">
         {/* Left: Cart List */}
         <div className="flex-1 bg-black p-6 rounded-lg">
-          <h2 className="text-white text-xl font-semibold mb-6">Checkout</h2>
-
+          <h2 className="text-white text-xl font-semibold mb-6">Your Cart</h2>
           {cartItems.length === 0 ? (
             <p className="text-gray-400">Your cart is empty</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-gray-300 border-separate border-spacing-y-4">
+            <div className="overflow-x-auto w-full">
+              {/* Large screens */}
+              <table className="hidden md:table w-full text-gray-300 border-separate border-spacing-y-6">
                 <thead>
                   <tr className="text-left text-sm text-gray-400">
                     <th className="pb-2">Draw Name</th>
@@ -79,7 +84,7 @@ export default function AddCart() {
                             )}
                           </div>
                         )}
-
+                        <span> +</span>
                         {item.sequences?.length > 1 && (
                           <button
                             onClick={() => handleViewTicket(item)}
@@ -89,13 +94,15 @@ export default function AddCart() {
                           </button>
                         )}
                       </td>
-
                       <td className="font-semibold text-yellow-400">
                         ₹{item.price}.00
                       </td>
                       <td>
                         <button
-                          onClick={() => dispatch(removeFromCart(item.id))}
+                          onClick={() => {
+                            dispatch(removeFromCart(item.id));
+                            toast.info('Item removed from cart');
+                          }}
                           className="text-red-500 hover:text-red-700"
                         >
                           <Trash2 size={18} />
@@ -105,15 +112,62 @@ export default function AddCart() {
                   ))}
                 </tbody>
               </table>
+
+              {/* Small screens */}
+              <div className="md:hidden flex flex-col gap-4">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-gray-800 text-white rounded-lg p-4 flex flex-col gap-2"
+                  >
+                    <div className="flex justify-between">
+                      <span className="font-semibold">{item.name}</span>
+                      <button
+                        onClick={() => {
+                          dispatch(removeFromCart(item.id));
+                          toast.info('Item removed from cart');
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-400">{item.date}</div>
+                    <div className="flex items-center flex-wrap gap-2">
+                      {item.sequences?.length > 0 &&
+                        item.sequences[item.sequences.length - 1].map(
+                          (num, i) => (
+                            <span
+                              key={i}
+                              className="bg-white text-black px-2 py-1 rounded-md text-sm font-semibold"
+                            >
+                              {num}
+                            </span>
+                          ),
+                        )}
+                      {item.sequences?.length > 1 && (
+                        <button
+                          onClick={() => handleViewTicket(item)}
+                          className="ml-1 bg-red-600 text-white text-xs px-3 py-1 rounded hover:bg-red-700"
+                        >
+                          View Ticket
+                        </button>
+                      )}
+                    </div>
+                    <div className="font-semibold text-yellow-400">
+                      ₹{item.price}.00
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
         {/* Right: Summary */}
-        {/* Right: Summary */}
         {cartItems.length > 0 && (
-          <div className="w-full md:w-80 bg-[#d4af37] text-black rounded-lg p-6 shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Checkout</h2>
+          <div className="w-full md:w-80 bg-[#e2bd6c] text-black rounded-lg p-6 shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Cart Total</h2>
             <div className="space-y-3 text-sm">
               {cartItems.map((item) => (
                 <div
@@ -125,26 +179,27 @@ export default function AddCart() {
                     <span className="text-xs text-black/70">/{item.name}</span>
                   </span>
                   <span className="font-semibold">
-                    ₹{item.price} × {item.sequences?.length || 1} = ₹
+                    ₹
                     {(
                       item.price * (item.sequences?.length || 1)
                     ).toLocaleString()}
+                    .00
                   </span>
                 </div>
               ))}
-              <div className="flex justify-between text-lg font-bold pt-3">
+              <div className="flex justify-between text-lg font-bold">
                 <span>Subtotal</span>
-                <span>₹{subtotal.toLocaleString()}</span>
+                <span>₹{subtotal.toLocaleString()}.00</span>
               </div>
             </div>
             <button
-              onClick={() => dispatch(clearCart())}
+              onClick={handleClearCart}
               className="w-full mt-4 bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600"
             >
               Clear Cart
             </button>
-            <button className="w-full mt-4 bg-white text-black font-semibold py-2 rounded-lg shadow hover:bg-gray-100">
-              Pay Now
+            <button className="w-full mt-4 bg-[#d9aa46] text-black font-semibold py-2 rounded-lg shadow hover:bg-[#d7a330]">
+              Checkout
             </button>
           </div>
         )}
@@ -195,6 +250,20 @@ export default function AddCart() {
           </div>
         </div>
       )}
+
+      {/* ToastContainer */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 }

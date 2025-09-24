@@ -5,6 +5,8 @@ import Layout from './components/Layout';
 import AddCart from '@/components/AddCart/cart';
 import { Landing, NotFound } from './containers/pageListAsync';
 import { store } from './redux/store'; // 👈 import store
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -18,6 +20,18 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>{' '}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </Provider>
   );
 }

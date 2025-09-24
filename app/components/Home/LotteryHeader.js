@@ -56,9 +56,9 @@ export default function LotteryHeader() {
   };
 
   const handlePickNumbers = () => {
-    // Example: random 7 numbers (6 main + 1 mega)
+    // Example: random 6 numbers (5 main + 1 mega)
     const sequence = Array.from(
-      { length: 7 },
+      { length: 6 },
       () => Math.floor(Math.random() * 50) + 1,
     );
 
@@ -66,8 +66,8 @@ export default function LotteryHeader() {
       addToCart({
         name: jackpot.name,
         price: Number(jackpot.ticketPrice.replace('₹', '')),
-        selectedMain: sequence.slice(0, 6),
-        selectedMega: sequence[6],
+        selectedMain: sequence.slice(0, 5),
+        selectedMega: sequence[5],
       }),
     );
   };

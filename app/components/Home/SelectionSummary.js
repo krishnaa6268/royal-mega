@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '@/redux/cartSlice';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,6 @@ export default function SelectionSummary({
 }) {
   const dispatch = useDispatch();
   const jackpot = useSelector((state) => state.jackpot.currentJackpot);
-
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   const handleAddToCart = () => {
@@ -23,8 +22,13 @@ export default function SelectionSummary({
       return;
     }
 
-    // Ensure selectedMain is always an array
-    const currentSequence = [...(selectedMain || []), selectedMega].join('-');
+    // Ensure all numbers are selected first
+    if (!selectedMain.length || selectedMega == null) {
+      toast.error('Please select all numbers before adding to cart!');
+      return;
+    }
+
+    const currentSequence = [...selectedMain, selectedMega].join('-');
 
     const isDuplicate = cartItems.some((item) => {
       const itemSequence = [
@@ -39,7 +43,7 @@ export default function SelectionSummary({
       return;
     }
 
-    // Add to cart if not duplicate
+    // Add to cart
     dispatch(
       addToCart({
         name: jackpot.name,
@@ -54,12 +58,14 @@ export default function SelectionSummary({
 
   return (
     <div className="flex flex-col gap-2">
+      {/* Jackpot Info */}
       {jackpot?.name && (
         <div className="px-6 text-lg font-semibold text-gray-700">
           Jackpot: {jackpot.name}
         </div>
       )}
 
+      {/* Selected Numbers */}
       <div className="p-6">
         <div className="p-4 border rounded-lg bg-white flex flex-col md:flex-row items-center justify-between shadow-sm">
           <div className="flex items-center flex-wrap gap-2 mb-4 md:mb-0">
@@ -79,7 +85,6 @@ export default function SelectionSummary({
             ) : (
               <span className="text-gray-400 italic">No numbers selected</span>
             )}
-
             {selectedMega && (
               <span className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white font-semibold shadow-md">
                 {selectedMega.toString().padStart(2, '0')}
@@ -104,6 +109,7 @@ export default function SelectionSummary({
         </div>
       </div>
 
+      {/* Entry + Add to Cart */}
       <div className="flex items-center justify-between">
         <div className="px-10 py-3 bg-[#D4AC54] text-black font-semibold rounded-r-md shadow cursor-default">
           Entry ₹{entryPrice}
@@ -115,6 +121,20 @@ export default function SelectionSummary({
           Add To Cart
         </button>
       </div>
+
+      {/* ToastContainer must be mounted once */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 }
