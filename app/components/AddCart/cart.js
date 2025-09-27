@@ -5,6 +5,14 @@ import { removeFromCart, clearCart, removeSequence } from '@/redux/cartSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+export const showToast = (message, type = 'default') => {
+  toast.dismiss(); // close any existing toast first
+  toast(message, {
+    type,
+    toastId: 'GLOBAL_TOAST', // one id for all toasts
+  });
+};
+
 export default function AddCart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
@@ -24,7 +32,7 @@ export default function AddCart() {
 
   const handleDeleteSequence = (itemId, seqIndex) => {
     dispatch(removeSequence({ itemId, seqIndex }));
-    toast.info('Sequence removed from cart');
+    showToast('Sequence removed from cart', 'info');
 
     // Update modal state
     setSelectedItem((prev) => {
@@ -37,7 +45,7 @@ export default function AddCart() {
 
   const handleClearCart = () => {
     dispatch(clearCart());
-    toast.info('Cart cleared');
+    showToast('Cart cleared', 'info');
   };
 
   return (
@@ -101,7 +109,7 @@ export default function AddCart() {
                         <button
                           onClick={() => {
                             dispatch(removeFromCart(item.id));
-                            toast.info('Item removed from cart');
+                            showToast('Item removed from cart', 'info');
                           }}
                           className="text-red-500 hover:text-red-700"
                         >

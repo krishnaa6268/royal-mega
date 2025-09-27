@@ -5,6 +5,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PropTypes from 'prop-types';
 
+const showToast = (message, type = 'default') => {
+  toast.dismiss(); // close any previous toast
+  toast(message, {
+    type,
+    toastId: 'GLOBAL_TOAST', // single id for all
+  });
+};
+
 export default function SelectionSummary({
   selectedMain = [],
   selectedMega = null,
@@ -18,12 +26,12 @@ export default function SelectionSummary({
 
   const handleAddToCart = () => {
     if (!jackpot?.name) {
-      toast.error('Please select a jackpot first!');
+      showToast('Please select a jackpot first!', 'error');
       return;
     }
 
     if (!selectedMain.length || selectedMega == null) {
-      toast.error('Please select all numbers before adding to cart!');
+      showToast('Please select all numbers before adding to cart!', 'error');
       return;
     }
 
@@ -48,7 +56,10 @@ export default function SelectionSummary({
     });
 
     if (isDuplicate) {
-      toast.error('Duplicate selection! This sequence is already in the cart.');
+      showToast(
+        'Duplicate selection! This sequence is already in the cart.',
+        'error',
+      );
       console.log('Duplicate detected:', currentSequence);
       return;
     }
@@ -63,7 +74,7 @@ export default function SelectionSummary({
       }),
     );
 
-    toast.success('Added to cart successfully!');
+    showToast('Added to cart successfully!', 'success');
     // ✅ Clear the selections after adding
     onClear();
   };

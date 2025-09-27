@@ -4,9 +4,11 @@ import { Provider } from 'react-redux';
 import Layout from './components/Layout';
 import AddCart from '@/components/AddCart/cart';
 import { Landing, NotFound } from './containers/pageListAsync';
-import { store } from './redux/store'; // 👈 import store
+import { store } from './redux/store';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Login from './containers/Forms/Login';
+import Signup from './containers/Forms/Signup';
+import Forgot from './containers/Forms/forgot';
 
 function App() {
   return (
@@ -18,6 +20,9 @@ function App() {
             <Route path="/addCart" element={<AddCart />} />
             <Route path="*" element={<NotFound />} />
           </Route>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot" element={<Forgot />} />
         </Routes>
       </BrowserRouter>{' '}
       <ToastContainer
@@ -35,5 +40,4 @@ function App() {
     </Provider>
   );
 }
-
 export default App;

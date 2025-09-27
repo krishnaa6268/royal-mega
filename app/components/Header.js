@@ -6,6 +6,10 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
+  const handleLogin = () => {
+    window.location.href = '/login';
+  };
+
   return (
     <header className="bg-black text-white border-b border-yellow-600">
       <div className="container max-w-auto space-y-6 py-18">
@@ -65,15 +69,19 @@ export default function Header() {
               </>
             ) : (
               <>
-                <button className="px-4 py-1 rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition">
+                <Link
+                  to="/signup"
+                  className="px-4 py-1 rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition"
+                >
                   Register
-                </button>
-                <button
+                </Link>
+                <Link
                   className="px-4 py-1 rounded-full bg-yellow-500 text-black font-medium"
-                  onClick={() => setIsLogin(true)}
+                  onClick={handleLogin}
+                  to="/login"
                 >
                   Log In
-                </button>
+                </Link>
               </>
             )}
           </div>
@@ -134,7 +142,7 @@ export default function Header() {
                     </button>
                     <button
                       className="flex-1 px-4 py-2 rounded-full bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition"
-                      onClick={() => setIsLogin(true)}
+                      onClick={handleLogin}
                     >
                       Log In
                     </button>
