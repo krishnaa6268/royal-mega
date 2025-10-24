@@ -5,6 +5,8 @@ const { merge } = require('webpack-merge');
 const CompressionPlugin = require('compression-webpack-plugin');
 const common = require('./webpack.common.js');
 
+const path = require('path');
+
 module.exports = merge(common, {
   mode: 'production',
   plugins: [
@@ -17,5 +19,11 @@ module.exports = merge(common, {
     assetFilter: function (assetFilename) {
       return assetFilename.endsWith('.js.gz');
     },
+  },
+
+  output: {
+    path: path.resolve(__dirname, '../dist'), // folder where build will go
+    filename: 'bundle.js',
+    publicPath: '/', // important for Vercel SPA routing
   },
 });
